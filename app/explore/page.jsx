@@ -255,23 +255,47 @@ export default function ExplorePage() {
   const [flights, setFlights] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFlight, setSelectedFlight] = useState(null);
+  const [error, setError] = useState(null);
   const { filterOpen, setFilterOpen } = useUIStore();
   const [showDetail, setShowDetail] = useState(false);
 
   const fetchFlights = useCallback(async () => {
     try {
-      const res = await fetch('/api/explore');
+      const res = await fetch('/api/explore', {
+        headers: { 'Cache-Control': 'max-age=30' }
+      });
       if (res.ok) {
         const data = await res.json();
         const parsed = parseOpenSkyResponse(data);
         setFlights(parsed);
+        
+        // Check if API is in degraded mode (returning empty data)
+        if (data.error || (parsed.length === 0 && data.states !== undefined)) {
+          setError(data.error || 'No flights available - APIs may be overloaded');
+        } else {
+          setError(null);
+        }
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        if (res.status === 429) {
+          setError('Rate limited - please wait before refreshing');
+        } else if (res.status === 503) {
+          setError('Flight data sources temporarily unavailable');
+        } else {
+          setError(errorData.error || `Server error: ${res.status}`);
+        }
+        if (flights.length === 0) setFlights([]);
       }
     } catch (err) {
-      console.error('Failed to fetch flights:', err);
+      console.warn('Fetch error:', err.message);
+      if (flights.length === 0) {
+        setError('Unable to connect to flight data services');
+        setFlights([]);
+      }
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [flights.length]);
 
   useEffect(() => {
     fetchFlights();
@@ -361,10 +385,73 @@ export default function ExplorePage() {
           )}
         </AnimatePresence>
 
-        {isLoading && flights.length === 0 && (
+        {isLoading && flights.length === 0 && !error && (
           <div className={styles.loadingOverlay}>
             <RadarSpinner size={64} />
             <div className={styles.loadingText}>SCANNING GLOBAL AIRSPACE</div>
+          </div>
+        )}
+
+        {error && flights.length === 0 && (
+          <div className={styles.loadingOverlay}>
+            <div style={{
+              textAlign: 'center',
+              color: 'var(--text-muted)',
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: '13px',
+              lineHeight: '1.6',
+              maxWidth: '350px',
+              padding: '24px',
+            }}>
+              <div style={{
+                fontFamily: 'Orbitron, sans-serif',
+                fontSize: '12px',
+                letterSpacing: '0.15em',
+                color: 'var(--orange)',
+                marginBottom: '16px',
+              }}>
+                TEMPORARY OUTAGE
+              </div>
+              <div style={{ marginBottom: '16px' }}>
+                {error || 'Flight data sources are temporarily overloaded. Please try again in 1-2 minutes.'}
+              </div>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => fetchFlights()}
+                  style={{
+                    background: 'rgba(0, 212, 255, 0.1)',
+                    border: '1px solid rgba(0, 212, 255, 0.3)',
+                    color: 'var(--cyan)',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontFamily: 'Orbitron, sans-serif',
+                    fontSize: '11px',
+                    letterSpacing: '0.1em',
+                  }}
+                >
+                  RETRY
+                </button>
+                <a
+                  href="/"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    background: 'rgba(255, 184, 0, 0.1)',
+                    border: '1px solid rgba(255, 184, 0, 0.3)',
+                    color: 'var(--orange)',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    textDecoration: 'none',
+                    fontFamily: 'Orbitron, sans-serif',
+                    fontSize: '11px',
+                    letterSpacing: '0.1em',
+                  }}
+                >
+                  HOME
+                </a>
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -21,7 +21,9 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch('/api/explore');
+        const res = await fetch('/api/explore', { 
+          headers: { 'Cache-Control': 'max-age=60' }
+        });
         if (res.ok) {
           const data = await res.json();
           const states = data.states || [];
@@ -41,17 +43,22 @@ export default function HomePage() {
               avgAlt: countWithAlt > 0 ? Math.round(totalAlt / countWithAlt) : 0,
               maxSpeed: Math.round(maxSpd),
             });
+          } else if (data.error) {
+            console.warn('API in degraded mode:', data.error);
           }
+        } else {
+          console.warn('Stats API error:', res.status);
         }
       } catch (err) {
-        console.error('Stats error:', err);
+        console.warn('Stats fetch error:', err.message);
+        // Silently fail - show cached/default stats
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchStats();
-    const interval = setInterval(fetchStats, 30000);
+    const interval = setInterval(fetchStats, 60000);
     return () => clearInterval(interval);
   }, []);
 
