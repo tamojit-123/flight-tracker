@@ -71,18 +71,19 @@ export default function TrackPage() {
             heading: flightData.true_track,
           });
         } else {
-          setError('Flight not found');
+          setError(`Flight ${icao24.toUpperCase()} not currently tracked. Try a different ICAO24 code.`);
         }
       } else {
-        setError('Failed to fetch flight data');
+        const errorData = await res.json().catch(() => ({}));
+        setError(errorData.error || 'Failed to fetch flight data');
       }
     } catch (err) {
       console.error('Flight fetch error:', err);
-      setError('Network error');
+      setError(`Unable to reach flight databases: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
-  }, [icao24, pushAltitude]);
+  }, [icao24, pushAltitude, pushPosition]);
 
   useEffect(() => {
     if (icao24) {
@@ -156,8 +157,22 @@ export default function TrackPage() {
           letterSpacing: '0.15em',
           color: 'var(--red)',
           marginBottom: '16px',
+          textAlign: 'center',
+          maxWidth: '400px',
+          padding: '0 24px',
         }}>
           {error || 'FLIGHT NOT FOUND'}
+        </div>
+        <div style={{
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: '11px',
+          color: 'var(--text-muted)',
+          marginBottom: '24px',
+          textAlign: 'center',
+          maxWidth: '400px',
+          lineHeight: '1.6',
+        }}>
+          {error?.includes('not currently tracked') && 'The aircraft may not be in the air or not tracked by available networks. Check the ICAO24 code is correct.'}
         </div>
         <a
           href="/"
