@@ -1,4 +1,4 @@
-# AeroTrack — Real-Time Global Flight Intelligence
+# AeroTrack — Real-Time Global Flight Tracking
 
 A production-grade, fully optimized Next.js 15 flight tracking platform with zero paid APIs and maximum futuristic aesthetic.
 
