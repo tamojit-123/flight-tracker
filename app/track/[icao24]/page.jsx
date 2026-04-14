@@ -34,7 +34,7 @@ export default function TrackPage() {
   const [showGraph, setShowGraph] = useState(false);
   const [error, setError] = useState(null);
 
-  const { altitudeHistory, pushAltitude, clearHistory } = useFlightStore();
+  const { altitudeHistory, positionHistory, pushAltitude, pushPosition, clearHistory } = useFlightStore();
 
   const fetchFlight = useCallback(async () => {
     if (!icao24) return;
@@ -64,6 +64,12 @@ export default function TrackPage() {
           };
           setFlight(flightData);
           pushAltitude({ time: Date.now(), altitude: flightData.baro_altitude || 0 });
+          pushPosition({ 
+            time: Date.now(), 
+            longitude: flightData.longitude, 
+            latitude: flightData.latitude,
+            heading: flightData.true_track,
+          });
         } else {
           setError('Flight not found');
         }
@@ -186,6 +192,7 @@ export default function TrackPage() {
         <FlightGlobe
           flights={flight ? [flight] : []}
           selectedFlight={flight}
+          positionHistory={positionHistory}
           className={styles.map}
         />
 
