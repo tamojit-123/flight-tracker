@@ -1,0 +1,115 @@
+:root {
+  --bg-void:      #03050D;
+  --bg-surface:   #080C14;
+  --bg-elevated:  #0D1423;
+  --cyan:         #00D4FF;
+  --cyan-dim:     #0097B5;
+  --amber:        #FFB800;
+  --red:          #FF3A5C;
+  --green:        #00FF88;
+  --text:         #E8F4FF;
+  --text-muted:   #4A6080;
+  --grid-line:    rgba(0,212,255,0.05);
+  --glow-cyan:    0 0 8px rgba(0,212,255,.6), 0 0 24px rgba(0,212,255,.3), 0 0 60px rgba(0,212,255,.1);
+  --glow-amber:   0 0 8px rgba(255,184,0,.6), 0 0 24px rgba(255,184,0,.3);
+  --glow-green:   0 0 8px rgba(0,255,136,.6), 0 0 24px rgba(0,255,136,.3);
+  --glow-red:     0 0 8px rgba(255,58,92,.6), 0 0 24px rgba(255,58,92,.3);
+}
+
+/* ── HUD PERSPECTIVE GRID BACKGROUND ── */
+.hud-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(800px) rotateX(8deg) scale(1.1);
+  transform-origin: center 30%;
+  animation: gridPulse 4s ease-in-out infinite;
+}
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.6 }
+  50%       { opacity: 1.0 }
+}
+
+/* ── SCANLINE OVERLAY ── */
+.scanlines::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  background: repeating-linear-gradient(
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,0.12) 4px
+  );
+}
+
+/* ── GLOW UTILITY CLASSES ── */
+.glow-cyan  { box-shadow: var(--glow-cyan); }
+.glow-amber { box-shadow: var(--glow-amber); }
+.glow-green { box-shadow: var(--glow-green); }
+.glow-red   { box-shadow: var(--glow-red); }
+
+/* ── TEXT GLOW ── */
+.text-glow-cyan  { text-shadow: 0 0 10px rgba(0,212,255,0.8), 0 0 30px rgba(0,212,255,0.4); color: var(--cyan); }
+.text-glow-amber { text-shadow: 0 0 10px rgba(255,184,0,0.8), 0 0 30px rgba(255,184,0,0.4); color: var(--amber); }
+
+/* ── TITLE FLICKER ── */
+.title-flicker {
+  animation: flicker 6s linear infinite;
+}
+@keyframes flicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1 }
+  20%,24%,55% { opacity: 0.7 }
+}
+
+/* ── RADAR SWEEP ── */
+@keyframes radarSweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.radar-spin { animation: radarSweep 1.8s linear infinite; }
+
+/* ── PULSE RING (AI button) ── */
+@keyframes pulseRing {
+  0%   { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0,212,255,0.6); }
+  70%  { transform: scale(1);   box-shadow: 0 0 0 14px rgba(0,212,255,0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0,212,255,0); }
+}
+.pulse-ring { animation: pulseRing 2s ease-out infinite; }
+
+/* ── THINKING DOTS ── */
+@keyframes thinkDot {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.3 }
+  40%           { transform: scale(1); opacity: 1 }
+}
+.think-dot:nth-child(1) { animation: thinkDot 1.2s ease-in-out infinite 0s; }
+.think-dot:nth-child(2) { animation: thinkDot 1.2s ease-in-out infinite 0.2s; }
+.think-dot:nth-child(3) { animation: thinkDot 1.2s ease-in-out infinite 0.4s; }
+
+/* ── CORNER BRACKET CARDS ── */
+.bracket-card {
+  position: relative;
+}
+.bracket-card::before,
+.bracket-card::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-color: var(--cyan);
+  border-style: solid;
+  opacity: 0.7;
+}
+.bracket-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.bracket-card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+/* ── ALTITUDE COLOR CODING ── */
+.alt-high   { color: var(--cyan); }
+.alt-mid    { color: #ffffff; }
+.alt-low    { color: var(--amber); }
+.alt-ground { color: var(--red); }
+
+/* ── BASE ── */
+html, body { background: var(--bg-void); color: var(--text); }
+* { box-sizing: border-box; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }

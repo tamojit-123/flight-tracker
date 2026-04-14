@@ -1,0 +1,128 @@
+.hud {
+  position: relative;
+  width: 340px;
+  background: rgba(8, 12, 20, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 4px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.cornerTL, .cornerBR {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--cyan);
+  border-style: solid;
+  opacity: 0.8;
+}
+.cornerTL {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.cornerBR {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+.callsign {
+  font-family: var(--font-heading, 'Orbitron', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+}
+
+.statusBadge {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.statusAirborne {
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.statusGround {
+  background: rgba(255, 58, 92, 0.15);
+  color: var(--red);
+  border: 1px solid rgba(255, 58, 92, 0.3);
+}
+
+.section {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.row:last-child { margin-bottom: 0; }
+
+.label {
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.value {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.valueHighlight {
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+.valueAmber { color: var(--amber); }
+.valueRed { color: var(--red); }
+.valueGreen { color: var(--green); }
+
+.meta {
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.icao {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+.vertRate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.vertRateUp { color: var(--green); }
+.vertRateDown { color: var(--red); }
+
+.glowBorder {
+  box-shadow: var(--glow-cyan);
+}
