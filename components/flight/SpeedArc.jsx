@@ -1,8 +1,10 @@
 'use client';
-import { useSpring, animated } from 'motion/react';
+import { useSpring } from 'motion/react';
+import { motion } from 'motion/react';
 
 export function SpeedArc({ speed = 0, maxSpeed = 350 }) {
-  const percentage = Math.min((speed / maxSpeed) * 100, 100);
+  const safeSpeed = speed ?? 0;
+  const percentage = Math.min((safeSpeed / maxSpeed) * 100, 100);
 
   const { dashOffset } = useSpring({
     from: { dashOffset: 283 },
@@ -21,7 +23,7 @@ export function SpeedArc({ speed = 0, maxSpeed = 350 }) {
     return '#FF3A5C';
   };
 
-  const color = getSpeedColor(speed);
+  const color = getSpeedColor(safeSpeed);
 
   return (
     <svg width="120" height="120" viewBox="0 0 120 120">
@@ -34,7 +36,7 @@ export function SpeedArc({ speed = 0, maxSpeed = 350 }) {
         strokeWidth="8"
       />
 
-      <animated.circle
+      <motion.circle
         cx="60"
         cy="60"
         r={radius}
@@ -60,7 +62,7 @@ export function SpeedArc({ speed = 0, maxSpeed = 350 }) {
         fontSize="20"
         fontWeight="700"
       >
-        {speed.toFixed(0)}
+        {safeSpeed.toFixed(0)}
       </text>
       <text
         x="60"
@@ -81,7 +83,7 @@ export function SpeedArc({ speed = 0, maxSpeed = 350 }) {
         fontFamily="Space Grotesk, sans-serif"
         fontSize="10"
       >
-        {(speed * 1.94384).toFixed(0)} kts
+        {(safeSpeed * 1.94384).toFixed(0)} kts
       </text>
     </svg>
   );

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { FlightLayer } from './FlightLayer';
+import { FlightPathLayer } from './FlightPathLayer';
 import { RouteArc } from './RouteArc';
 import styles from '@/styles/modules/Map.module.css';
 
@@ -15,6 +16,7 @@ export function FlightGlobe({
   showArc = false,
   arcStart = null,
   arcEnd = null,
+  positionHistory = [],
   className = '',
 }) {
   const mapContainer = useRef(null);
@@ -161,6 +163,13 @@ export function FlightGlobe({
           map={map.current}
           flights={flights}
           onFlightClick={onFlightClick}
+        />
+      )}
+
+      {mapLoaded && map.current && positionHistory.length > 0 && (
+        <FlightPathLayer
+          map={map.current}
+          positionHistory={positionHistory}
         />
       )}
 
