@@ -3,7 +3,7 @@ import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
 import '@/styles/globals.css';
 
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { QueryClientProviderWrapper } from '@/lib/queryClient';
 import { Orbitron, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
@@ -23,14 +23,13 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      {...mantineHtmlProps}
+      data-mantine-color-scheme="dark"
       className={`${orbitron.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
-      suppressHydrationWarning
     >
-      <head>
-        <ColorSchemeScript defaultColorScheme="dark" />
-      </head>
-      <body>
-        <MantineProvider theme={aeroTheme} defaultColorScheme="dark">
+      <head />
+      <body suppressHydrationWarning>
+        <MantineProvider theme={aeroTheme} forceColorScheme="dark">
           <Notifications position="top-right" zIndex={9999} />
           <QueryClientProviderWrapper>
             {children}
