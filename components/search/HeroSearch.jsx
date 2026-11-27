@@ -5,7 +5,7 @@ import { Paper, ScrollArea, Text, Group } from '@mantine/core';
 import { motion, AnimatePresence } from 'motion/react';
 import { IconSearch, IconPlane } from '@tabler/icons-react';
 import { debounce } from '@/lib/utils';
-import { getCountryFlag, formatAltitude } from '@/lib/flightParser';
+import { getCountryFlag, formatAltitude, parseOpenSkyResponse } from '@/lib/flightParser';
 import { classifyAircraft, getAircraftIcon } from '@/lib/aircraftClassifier';
 import styles from '@/styles/modules/HeroSearch.module.css';
 
@@ -109,7 +109,7 @@ export function HeroSearch() {
       const res = await fetch(`/api/flight?callsign=${encodeURIComponent(searchQuery.toUpperCase())}`);
       if (res.ok) {
         const data = await res.json();
-        const flights = data.states || [];
+        const flights = parseOpenSkyResponse(data);
         setResults(flights);
       }
     } catch (err) {
