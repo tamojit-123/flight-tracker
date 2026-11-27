@@ -1,4 +1,5 @@
 import { rateLimiter } from '@/lib/rateLimiter';
+import { adsbResponseToStates } from '@/lib/flightParser';
 
 // Simple in-memory cache to reduce API calls
 let cachedData = null;
@@ -69,27 +70,7 @@ async function fetchAllFlights() {
     if (fbRes.ok) {
       const data = await fbRes.json();
       if (data.ac && Object.keys(data.ac).length > 0) {
-        const states = Object.values(data.ac).map(ac => [
-          ac.icao,
-          ac.call?.trim() || null,
-          ac.country || 'Unknown',
-          ac.ts || Math.floor(Date.now() / 1000),
-          ac.ts || Math.floor(Date.now() / 1000),
-          ac.lon ?? 0,
-          ac.lat ?? 0,
-          ac.alt ?? null,
-          ac.gnd ?? false,
-          ac.spd ?? 0,
-          ac.track ?? 0,
-          ac.vert_rate ?? 0,
-          null,
-          ac.alt ?? null,
-          ac.squawk || null,
-          false,
-          null,
-          ac.ts || null,
-        ]);
-        
+        const states = adsbResponseToStates(data);
         const result = { states, time: Math.floor(Date.now() / 1000) };
         cachedData = result;
         cacheTime = Date.now();
@@ -132,27 +113,7 @@ async function fetchAllFlights() {
     }
 
     if (Object.keys(allAircraft).length > 0) {
-      const states = Object.values(allAircraft).map(ac => [
-        ac.icao,
-        ac.call?.trim() || null,
-        ac.country || 'Unknown',
-        ac.ts || Math.floor(Date.now() / 1000),
-        ac.ts || Math.floor(Date.now() / 1000),
-        ac.lon ?? 0,
-        ac.lat ?? 0,
-        ac.alt ?? null,
-        ac.gnd ?? false,
-        ac.spd ?? 0,
-        ac.track ?? 0,
-        ac.vert_rate ?? 0,
-        null,
-        ac.alt ?? null,
-        ac.squawk || null,
-        false,
-        null,
-        ac.ts || null,
-      ]);
-
+      const states = adsbResponseToStates({ ac: allAircraft });
       const result = { states, time: Math.floor(Date.now() / 1000) };
       cachedData = result;
       cacheTime = Date.now();

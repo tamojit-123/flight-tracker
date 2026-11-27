@@ -49,7 +49,7 @@ function flightsToGeoJSON(flights) {
 const workerAPI = {
   async processStates(rawStates) {
     if (!Array.isArray(rawStates)) return { type: 'FeatureCollection', features: [] };
-    const parsed = rawStates.map(parseStateVector).filter(f => f && f.latitude && f.longitude);
+    const parsed = rawStates.map(parseStateVector).filter(f => f && f.latitude != null && f.longitude != null);
     return flightsToGeoJSON(parsed);
   },
 
